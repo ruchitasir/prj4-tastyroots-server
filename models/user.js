@@ -51,7 +51,7 @@ let userSchema = new mongoose.Schema({
 // Make a function that compares passwords
 userSchema.methods.validPassword= function (typedPassword) {
     // typedPassword: Plain text, just typed in by user
-    // this.password: Existing, hashed password
+    // this.password: Existing, hashed password1`
     return bcrypt.compareSync(typedPassword, this.password)
 }
 
