@@ -1,13 +1,25 @@
 let bcrypt= require('bcryptjs')
 let mongoose = require('mongoose')
 
+//family Schema
+let familySchema = new mongoose.Schema({
+    familyCircle:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'FamilyCircle'
+    },
+    userRole: String   
+})
+
 //  Create user schema
 let userSchema = new mongoose.Schema({
     firstname: {
         type: String,
         required: true
     },
-    lastname: String,
+    lastname: {
+        type: String,
+        required: true
+    },
     email:{
         type: String,
         required: true,
@@ -19,7 +31,16 @@ let userSchema = new mongoose.Schema({
         required: true,
         minlength: 8
     },
-    pic: String,
+    picture:{ 
+        type:String,
+        default: ''
+    },
+    bio: String,
+    recipes:    [{
+        type:  mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe'
+    }],
+    families: [familySchema],
     admin:{
         type: Boolean,
         default: false
