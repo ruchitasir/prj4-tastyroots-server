@@ -19,6 +19,11 @@ app.use(cors()) // TODO: Add react app as origin to CORS
 // Routes
 app.use('/auth', require('./controllers/auth'))
 app.use('/profile', expressJWT({secret: process.env.JWT_SECRET}), require('./controllers/profile'))
+app.use('/recipe', require('./controllers/recipe'))
+
+app.get('/', (req, res) => {
+  res.send({ message: "Welcome to the base route for Tasty Roots!"})
+})
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Not Found' })
