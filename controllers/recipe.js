@@ -154,7 +154,7 @@ router.put('/:id', (req, res) => {
         return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
     })
 
-    db.Recipe.findOneAndUpdate({_id:req.params.id}, {          
+    db.Recipe.updateOne({_id:req.params.id}, {          
             recipeName: req.body.recipeName,
             originalRecipe: req.body.originalRecipe,
             description: req.body.description,  
