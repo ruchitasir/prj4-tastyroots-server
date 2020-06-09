@@ -85,7 +85,7 @@ router.post('/',(req,res)=>{
         })
 
         // 1.Create recipe
-      
+
         // 2. check sharedWith if it is empty or null and if not then
         // use the family ids and for each family circle id, add recipe to that family circle array
         
@@ -154,7 +154,7 @@ router.put('/:id', (req, res) => {
         return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
     })
 
-    db.Recipe.findOneAndUpdate({_id:req.params.id}, {          
+    db.Recipe.updateOne({_id:req.params.id}, {          
             recipeName: req.body.recipeName,
             originalRecipe: req.body.originalRecipe,
             description: req.body.description,  

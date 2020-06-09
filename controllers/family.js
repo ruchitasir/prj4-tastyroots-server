@@ -1,6 +1,9 @@
 let router = require('express').Router()
 let db = require('../models')
 
+/*****************************
+ * GET ROUTES
+ ****************************/
 /**
  * GET
  * @returns A single family circle in the db
@@ -16,10 +19,12 @@ router.get('/:id', (req, res) => {
         })
 })
 
-
+/*****************************
+ * POST ROUTES
+ ****************************/
 /**
  * POST
- * @todo - use token user? or not? req.user._id
+ * Creates a new family circle
  */
 router.post('/', (req, res) => {
     db.FamilyCircle.create(req.body)
@@ -42,9 +47,12 @@ router.post('/', (req, res) => {
         })
 })
 
+/*****************************
+ * PUT ROUTES
+ ****************************/
 /**
- * PUT route to join family circle
- * @todo- check family token and give unique error status if not matching
+ * PUT 
+ * Join family circle
  */
 router.put('/', (req, res) => {
     db.FamilyCircle.updateOne({_id: req.body._id, 
