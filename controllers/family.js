@@ -43,11 +43,11 @@ router.post('/', (req, res) => {
                     }
                 })
                 .then((updatedUser) => {
-                    console.log("user joined family circle", updatedUser)
+                    console.log("user created family circle", updatedUser)
                     res.send({updatedUser})
                 })
                 .catch(innerErr => {
-                    console.log("Error creating a new family circle", innerErr)
+                    console.log("Error in creating a new family circle", innerErr)
                     if (innerErr.name === 'ValidationError') {
                         res.status(412).send({ message: `Validation Error! ${innerErr.message}.` })
                     } else {
@@ -56,7 +56,7 @@ router.post('/', (req, res) => {
                 })
             })
             .catch((inErr) => {
-                console.log("Error in creating new family circle:", inErr)
+                console.log("Error in creating a new family circle:", inErr)
                 if (inErr.name === 'ValidationError') {
                     res.status(412).send({ message: `Validation Error! ${inErr.message}.` })
                 } else {
@@ -64,7 +64,7 @@ router.post('/', (req, res) => {
                 }
         })
         .catch((err) => {
-            console.log("Error in creating new family circle:", err)
+            console.log("Error in creating a new family circle:", err)
             res.status(503).send({message: 'Database or server error'})
         })
 })
@@ -85,8 +85,21 @@ router.put('/', (req, res) => {
             }
         })
         .then((f) => {
-            console.log('joined family', f)
-            res.send(f)
+            db.User.updateOne({ _id: req.user._id },
+                {$push: {
+                    families: {_id: f._id,
+                        userRole: "member"
+                    }
+                }
+            })
+            .then((updatedUser) => {
+                console.log("user joined family circle", updatedUser)
+                res.send({updatedUser})
+            })
+            .catch(innerErr => {
+                console.log("Error in joining a family circle", innerErr)
+                res.status(500).send({ message: 'Error in joining a family circle' })
+                })
         })
         .catch((err) => {
             console.log("Error in joining family circle:", err)
