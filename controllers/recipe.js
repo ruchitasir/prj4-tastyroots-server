@@ -75,9 +75,7 @@ router.get('/user/:id', (req, res) => {
  * Adds a new recipe to the database.
  */
 router.post('/',(req,res)=>{
-        console.log('post recipe BODY:',req.body)
-        
-   
+        console.log('post recipe BODY:',req.body)  
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
         ingredientsArray = req.body.ingredients
@@ -135,7 +133,47 @@ router.post('/',(req,res)=>{
         })
 })
 
+/*****************************
+ * PUT ROUTE
+ ****************************/
 
+/**
+ * PUT  
+ * Edits an existing recipe to the database.
+ * @returns A recipe with a specific id
+ * @param id, recipe id
+ */
+router.put('/:id', (req, res) => {
+    console.log('put recipe BODY:',req.body)  
+    // Parse the ingredients from req.body.ingredients array 
+    // Assuming each ingredient is a string of form: '2,ounce,butter'
+    ingredientsArray = req.body.ingredients
+    ingredients = ingredientsArray.map((ingredient)=>{
+        ingredientSplit = ingredient.split(',')
+        return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
+    })
+
+    db.Recipe.findOneAndUpdate({_id:req.params.id}, {          
+            recipeName: req.body.recipeName,
+            originalRecipe: req.body.originalRecipe,
+            description: req.body.description,  
+            creatorId:  req.body.creatorId,
+            servings: req.body.servings,
+            prepTime: req.body.prepTime,
+            cookTime: req.body.cookTime,
+            ingredients: ingredients,
+            steps: req.body.steps,
+            pictures: req.body.pictures,
+            sharedWith : req.body.sharedWith,
+            public: req.body.public,        
+    })
+    .then((recipe) => {
+        res.send(recipe)
+    })
+    .catch((err) => {
+        console.log("Error in put /recipe/:id:",err)
+    })
+})
 
 
 module.exports = router
