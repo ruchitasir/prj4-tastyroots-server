@@ -12,6 +12,7 @@ let familyCircleSchema = new mongoose.Schema({
     familyToken:{ 
         type: String,
         required: true,
+        unique: true,
         minlength: 8
     },
     countryOrigin: String,
