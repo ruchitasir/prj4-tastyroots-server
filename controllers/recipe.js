@@ -49,8 +49,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
-<<<<<<< HEAD
-=======
+
 /**
  * GET
  * @returns All the recipes in the db which belongs to a particular user (user-id)
@@ -134,7 +133,7 @@ router.post('/',(req,res)=>{
             console.log("Error in post /recipe route:",err)
         })
 })
->>>>>>> 538493bb7f8fd70d660cfec323b64ba842fe85ee
+
 
 
 
