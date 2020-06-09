@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
  ****************************/
 //**
 //* PUT
-// updates user profile
+// updates user profile like picture and bio but not email, password,firstname and lastname
 router.put('/', (req, res) => {
   db.User.updateOne({ _id: req.user._id }, req.body)
     .then((u) => {
