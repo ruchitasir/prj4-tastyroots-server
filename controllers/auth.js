@@ -20,8 +20,15 @@ router.post('/login', (req, res) => {
             return res.status(401).send({message: "Invalid credentials"})
           }
           // We have a good user - make them a new token, send it to them
-          let token = jwt.sign(user.toJSON(),process.env.JWT_SECRET,{
-              expiresIn: 60*60*8 // 8 hours, in seconds
+          let modifiedUser = {
+            _id: user._id,
+            firstname: user.firstname,
+            lastname: user.lastname, 
+            email: user.email
+          }
+          // User exists, so create a token for the new user
+          let token = jwt.sign(modifiedUser, process.env.JWT_SECRET,{
+              expiresIn:  60 * 60* 8 // 8 hours, in seconds
           })
           res.send({ token })
       })
@@ -46,8 +53,14 @@ router.post('/signup', (req, res) => {
      //We know the user is legitimately a new user so create new user account
       db.User.create(req.body)
       .then(newUser=>{
+        let modifiedUser = {
+          _id: newUser._id,
+          firstname: newUser.firstname,
+          lastname: newUser.lastname, 
+          email: newUser.email
+        }
         // User exists, so create a token for the new user
-        let token = jwt.sign(newUser.toJSON(),process.env.JWT_SECRET,{
+        let token = jwt.sign(modifiedUser, process.env.JWT_SECRET,{
             expiresIn:  60 * 60* 8 // 8 hours, in seconds
         })
         res.send({token})
