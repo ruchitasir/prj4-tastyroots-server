@@ -27,24 +27,47 @@ router.get('/:id', (req, res) => {
  * Creates a new family circle
  */
 router.post('/', (req, res) => {
-    db.FamilyCircle.create(req.body)
-        .then((nf) => {
-            db.User.updateOne({ _id: req.user._id},
-                { $push: { families: {_id: nf._id, 
-                        userRole: "creator"
-                    }}
+    //check uniqueness of family token
+    db.FamilyCircle.findOne({ familyToken: req.body.familyToken })
+        .then((family) => {
+            if (family) {
+                return res.status(409).send({ message: 'Family token is in use' })
+            }
+            db.FamilyCircle.create(req.body)
+            .then((f) => {
+                db.User.updateOne({ _id: req.user._id },
+                    {$push: {
+                        families: {_id: f._id,
+                            userRole: "creator"
+                        }
+                    }
                 })
                 .then((updatedUser) => {
                     console.log("user joined family circle", updatedUser)
+                    res.send({updatedUser})
                 })
-                .catch((err) => {
-                    console.log("Error in updating user when creating family:", err)
+                .catch(innerErr => {
+                    console.log("Error creating a new family circle", innerErr)
+                    if (innerErr.name === 'ValidationError') {
+                        res.status(412).send({ message: `Validation Error! ${innerErr.message}.` })
+                    } else {
+                        res.status(500).send({ message: 'Error creating family circle' })
+                    }
                 })
-            res.send(nf)
+            })
+            .catch((inErr) => {
+                console.log("Error in creating new family circle:", inErr)
+                if (inErr.name === 'ValidationError') {
+                    res.status(412).send({ message: `Validation Error! ${inErr.message}.` })
+                } else {
+                    res.status(500).send({ message: 'Error creating family circle' })
+                }
         })
         .catch((err) => {
             console.log("Error in creating new family circle:", err)
+            res.status(503).send({message: 'Database or server error'})
         })
+})
 })
 
 /*****************************
@@ -55,18 +78,20 @@ router.post('/', (req, res) => {
  * Join family circle
  */
 router.put('/', (req, res) => {
-    db.FamilyCircle.updateOne({_id: req.body._id, 
-        familyToken: {$eq: req.body.familyToken }},
-        {$push: {members: {_id: req.user._id}
-    }})
-    .then((f) => {
-        console.log('joined family', f)
-        res.send(f)
-    })
-    .catch((err) => {
-        console.log("Error in joining family circle:", err)
-        res.status(400).send({message: "Please check your family token."})
-    })
+    db.FamilyCircle.updateOne({ familyToken: req.body.familyToken },
+        {
+            $push: {
+                members: { _id: req.user._id }
+            }
+        })
+        .then((f) => {
+            console.log('joined family', f)
+            res.send(f)
+        })
+        .catch((err) => {
+            console.log("Error in joining family circle:", err)
+            res.status(400).send({ message: "Please check your family token." })
+        })
 
 })
 
