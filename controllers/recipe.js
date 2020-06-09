@@ -105,28 +105,29 @@ router.post('/',(req,res)=>{
             public: req.body.public,      
         })
         .then((recipe) => {
-            console.log('req.body.shared',req.body.sharedWith)
-            if(req.body.sharedWith){
-                console.log('it is not empty') 
-                db.FamilyCircle.updateMany(  {_id: {$in: sharedWith}}, 
-                    {$push: {familyRecipes: recipe}})
-                .then((updatedFamilyCircles)=>{
-                    db.User.updateOne({_id: req.body.creatorId},
-                        {$push: {recipes: recipe._id}} )
-                    .then((updatedUser)=>{
+            db.User.updateOne({_id: req.body.creatorId},
+                {$push: {recipes: recipe._id}} )
+            .then((updatedUser)=>{
+                    console.log('req.body.shared',req.body.sharedWith)
+                    if(req.body.sharedWith){
+                        console.log('it is not empty') 
+                        db.FamilyCircle.updateMany(  {_id: {$in: req.body.sharedWith}}, 
+                            {$push: {familyRecipes: recipe}})
+                        .then((updatedFamilyCircles)=>{
+                            res.send(recipe)            
+                        })
+                        .catch((err) => {
+                            console.log("Error in post /recipe route, updating the family circle :",err)
+                        })
+                    }
+                    else{
+                        console.log('sharedWith is empty')
                         res.send(recipe)
-                    })
-                    .catch((err) => {
-                        console.log("Error in post /recipe route, updating the user to have this recipe :",err)
-                    })    
-                })
-                .catch((err) => {
-                    console.log("Error in post /recipe route, updating the family circle :",err)
-                })
-             }
-             else{
-                 console.log('sharedWith is empty')
-             }
+                    }
+            })
+            .catch((err) => {
+                console.log("Error in post /recipe route, updating the user to have this recipe :",err)
+            })   
         })
         .catch((err) => {
             console.log("Error in post /recipe route:",err)
@@ -134,7 +135,7 @@ router.post('/',(req,res)=>{
 })
 
 /*****************************
- * PUT ROUTE
+ * PUT ROUTES
  ****************************/
 
 /**
