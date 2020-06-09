@@ -3,12 +3,16 @@ let db = require('../models')
 var jwt = require('jsonwebtoken');
 // var mongoose_1 = __importDefault(require("mongoose"));
 
+
+/*****************************
+ * GET ROUTES
+ ****************************/
 //**
 // * GET
 //* Returns all current user info
 router.get('/', (req, res) => {
   db.User.findById(req.user._id)
-    .populate('Recipe', 'User')
+    .populate({path: 'recipes', model: 'Recipe'})
     .then((u) => {
       console.log(u)
       res.send(u)
@@ -18,6 +22,9 @@ router.get('/', (req, res) => {
     })
 })
 
+/*****************************
+ * PUT ROUTE
+ ****************************/
 //**
 //* PUT
 // updates user profile
