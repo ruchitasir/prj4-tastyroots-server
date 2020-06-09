@@ -76,7 +76,6 @@ router.get('/user/:id', (req, res) => {
 router.post('/',(req,res)=>{
         console.log('post recipe BODY:',req.body)
         
-   
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
         ingredientsArray = req.body.ingredients
@@ -86,7 +85,7 @@ router.post('/',(req,res)=>{
         })
 
         // 1.Create recipe
-      
+
         // 2. check sharedWith if it is empty or null and if not then
         // use the family ids and for each family circle id, add recipe to that family circle array
         
