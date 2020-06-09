@@ -18,7 +18,6 @@ router.get('/', (req, res) => {
     })
 })
 
-
 //**
 //* PUT
 // updates user profile
