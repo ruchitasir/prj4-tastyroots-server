@@ -177,4 +177,11 @@ router.put('/:id', (req, res) => {
 })
 
 
+/**
+ * PUT  
+ * Edits an existing recipe to make it shared with family circle or unshare from a family circle
+ * @returns A recipe with a specific recipe id
+ * @param id, recipe id
+ */
+
 module.exports = router
