@@ -19,7 +19,8 @@ app.use(cors()) // TODO: Add react app as origin to CORS
 // Routes
 app.use('/auth', require('./controllers/auth'))
 app.use('/profile', expressJWT({secret: process.env.JWT_SECRET}), require('./controllers/profile'))
-app.use('/recipe', require('./controllers/recipe'))
+app.use('/recipe', expressJWT({secret: process.env.JWT_SECRET}), require('./controllers/recipe'))
+app.use('/family', expressJWT({secret: process.env.JWT_SECRET}), require('./controllers/family'))
 
 app.get('/', (req, res) => {
   res.send({ message: "Welcome to the base route for Tasty Roots!"})
