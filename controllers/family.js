@@ -78,12 +78,9 @@ router.post('/', (req, res) => {
  * Join family circle
  */
 router.put('/', (req, res) => {
-    db.FamilyCircle.updateOne({ familyToken: req.body.familyToken },
-        {
-            $push: {
-                members: { _id: req.user._id }
-            }
-        })
+    db.FamilyCircle.findOneAndUpdate({ familyToken: req.body.familyToken },
+        {$push: {members: { _id: req.user._id }}}, 
+        {useFindAndModify: false})
         .then((f) => {
             db.User.updateOne({ _id: req.user._id },
                 {$push: {
