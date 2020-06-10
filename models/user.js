@@ -4,8 +4,8 @@ let mongoose = require('mongoose')
 //family Schema
 let familySchema = new mongoose.Schema({
     familyCircle: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'FamilyCircle'
+        familyId: {type: mongoose.Schema.Types.ObjectId, 
+        ref: 'FamilyCircle'}
     },
     userRole: String
 })
