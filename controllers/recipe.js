@@ -79,10 +79,15 @@ router.post('/',(req,res)=>{
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
         ingredientsArray = req.body.ingredients
-        ingredients = ingredientsArray.map((ingredient)=>{
-            ingredientSplit = ingredient.split(',')
-            return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
-        })
+        if (Array.isArray(ingredientsArray)) {
+            ingredients = ingredientsArray.map((ingredient) => {
+                ingredientSplit = ingredient.split(',')
+                return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
+            })
+        } else {
+            ingredientSplit = req.body.ingredients.split(',')
+            ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
+        }
 
         // 1.Create recipe
 
