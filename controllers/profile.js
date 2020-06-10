@@ -14,13 +14,14 @@ router.get('/', (req, res) => {
   console.log(req.user.id)
   db.User.findById(req.user._id)
     .populate('recipes')
-    .populate({path:'familyCircle.familyId', model: 'User'})
+    .populate({path: 'families._id', model:'FamilyCircle'})
     .then((u) => {
       console.log(u)
       res.send(u)
     })
     .catch((err) => {
-      res.send("Error:", err)
+      console.log("ERROR in user get route", err)
+  
     })
 })
 

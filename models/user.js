@@ -1,7 +1,7 @@
 let bcrypt = require('bcryptjs')
 let mongoose = require('mongoose')
 
-//family Schema
+// //family Schema
 let familySchema = new mongoose.Schema({
     familyCircle: {
         familyId: {type: mongoose.Schema.Types.ObjectId, 
