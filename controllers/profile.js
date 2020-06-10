@@ -12,13 +12,15 @@ var jwt = require('jsonwebtoken');
 //* Returns all current user info
 router.get('/', (req, res) => {
   db.User.findById(req.user._id)
-    .populate('recipes', 'families')
+    .populate('recipes')
+    .populate({path: 'families._id', model:'FamilyCircle'})
     .then((u) => {
       console.log(u)
       res.send(u)
     })
     .catch((err) => {
-      res.status(500).send("Error:", err)
+      console.log("ERROR in user get route", err)
+  
     })
 })
 

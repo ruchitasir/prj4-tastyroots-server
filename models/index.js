@@ -6,7 +6,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/tastyroots', {
   useCreateIndex: true
 })
 
-module.exports.User = require('./user')
 module.exports.Recipe = require('./recipe')
 module.exports.FamilyCircle = require('./familyCircle')
+module.exports.User = require('./user')
 module.exports.Tag = require('./tag')
