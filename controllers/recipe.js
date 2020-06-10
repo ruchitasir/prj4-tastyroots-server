@@ -193,7 +193,7 @@ router.put('/sharedWith/:id', (req, res) => {
     .then((recipe) => {
         // find all the family circles which contains this recipe and update them to not have this recipe
         db.FamilyCircle.updateMany({familyRecipes: req.params.id},{
-            $pullAll: {familyRecipes: req.params.id}
+            $pullAll: {familyRecipes: [req.params.id]}
         })
         .then((updatedFamilyCircles=>{
              // add new family circles that user has chosen for sharing, in the recipe
