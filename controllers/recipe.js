@@ -183,9 +183,50 @@ router.put('/:id', (req, res) => {
  * @returns A recipe with a specific recipe id
  * @param id, recipe id
  */
-
-router.put('/:id', (req, res) => {
-
+router.put('/sharedWith/:id', (req, res) => {
+    console.log('put sharedWith recipe BODY:',req.body) 
+    console.log('req.body.shared',req.body.sharedWith) 
+     // removes all the family circles to which this recipe has been previously shared
+    db.Recipe.updateOne({_id:req.params.id}, {  
+        $set: { sharedWith: [] }
+    })
+    .then((recipe) => {
+        // find all the family circles which contains this recipe and update them to not have this recipe
+        db.FamilyCircle.updateMany({familyRecipes: req.params.id},{
+            $pullAll: {familyRecipes: req.params.id}
+        })
+        .then((updatedFamilyCircles=>{
+             // add new family circles that user has chosen for sharing, in the recipe
+            if(req.body.sharedWith){
+                db.Recipe.updateOne({_id:req.params.id},req.body)
+                .then((fullyUpdatedRecipe)=>{
+                    // add/update the family circles user has sent in req.body.sharedWith,  with this recipe again
+                    db.FamilyCircle.updateMany({_id: {$in: req.body.sharedWith}}, 
+                        {$push: {familyRecipes: fullyUpdatedRecipe}})
+                    .then((updatedFamilyCircles)=>{
+                        res.send(fullyUpdatedRecipe)            
+                    })
+                    .catch((err) => {
+                        console.log("Error in post /recipe route, updating the family circle with recipe :",err)
+                    })
+                })
+                .catch((err) => {
+                    console.log("Error in put /recipe/sharedWith/:id: while updating the recipe with family circles",err)
+                }) 
+            } else {
+                console.log('sharedWith is empty in put /recipe/sharedWith/:id')
+                //user has unshared this recipe with all the family circles
+                res.send(recipe)
+            }
+        }))
+        .catch((err) => {
+            console.log("Error in put /recipe/sharedWith/:id in removing the recipes from the family circles :",err)
+        })
+    })
+    .catch((err) => {
+        console.log("Error in put /recipe/sharedWith/:id: in removing the family circles from the recipe",err)
+    }) 
+    
 })
 
 module.exports = router
