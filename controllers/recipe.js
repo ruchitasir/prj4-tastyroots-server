@@ -78,15 +78,21 @@ router.post('/',(req,res)=>{
         console.log('post recipe BODY:',req.body)  
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
+        console.log('ingredients', req.body.ingredients)
         ingredientsArray = req.body.ingredients
-        if (Array.isArray(ingredientsArray)) {
-            ingredients = ingredientsArray.map((ingredient) => {
-                ingredientSplit = ingredient.split(',')
-                return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
-            })
-        } else {
-            ingredientSplit = req.body.ingredients.split(',')
-            ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
+        if(ingredientsArray){
+                if (Array.isArray(ingredientsArray)) {
+                    ingredients = ingredientsArray.map((ingredient) => {
+                        ingredientSplit = ingredient.split(',')
+                        return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
+                    })
+                } else {
+                    ingredientSplit = req.body.ingredients.split(',')
+                    ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
+                }
+        }
+        else{
+            ingredients = []
         }
 
         // 1.Create recipe
@@ -153,11 +159,17 @@ router.put('/:id', (req, res) => {
     console.log('put recipe BODY:',req.body)  
     // Parse the ingredients from req.body.ingredients array 
     // Assuming each ingredient is a string of form: '2,ounce,butter'
-    ingredientsArray = req.body.ingredients
-    ingredients = ingredientsArray.map((ingredient)=>{
-        ingredientSplit = ingredient.split(',')
-        return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
-    })
+   
+    if('ingredients' in req.body){
+        ingredientsArray = req.body.ingredients
+        ingredients = ingredientsArray.map((ingredient)=>{
+            ingredientSplit = ingredient.split(',')
+            return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
+        })
+    }
+    else{
+        ingredients = []
+    }
 
     db.Recipe.updateOne({_id:req.params.id}, {          
             recipeName: req.body.recipeName,
@@ -203,11 +215,12 @@ router.put('/sharedWith/:id', (req, res) => {
         .then((updatedFamilyCircles=>{
              // add new family circles that user has chosen for sharing, in the recipe
             if(req.body.sharedWith){
-                db.Recipe.updateOne({_id:req.params.id},req.body)
+                db.Recipe.findOneAndUpdate({_id:req.params.id},req.body, {useFindAndModify: false})
                 .then((fullyUpdatedRecipe)=>{
                     // add/update the family circles user has sent in req.body.sharedWith,  with this recipe again
+                    console.log('fullyUpdatedRecipe', fullyUpdatedRecipe)
                     db.FamilyCircle.updateMany({_id: {$in: req.body.sharedWith}}, 
-                        {$push: {familyRecipes: fullyUpdatedRecipe}})
+                        {$push: {familyRecipes: fullyUpdatedRecipe._id}})
                     .then((updatedFamilyCircles)=>{
                         res.send(fullyUpdatedRecipe)            
                     })
