@@ -105,7 +105,7 @@ router.post('/',(req,res)=>{
             recipeName: req.body.recipeName,
             originalRecipe: req.body.originalRecipe,
             description: req.body.description,  
-            creatorId:  req.body.creatorId,
+            creatorId:  req.user._id,
             servings: req.body.servings,
             prepTime: req.body.prepTime,
             cookTime: req.body.cookTime,
@@ -116,7 +116,7 @@ router.post('/',(req,res)=>{
             public: req.body.public,      
         })
         .then((recipe) => {
-            db.User.updateOne({_id: req.body.creatorId},
+            db.User.updateOne({_id: req.user._id},
                 {$push: {recipes: recipe._id}} )
             .then((updatedUser)=>{
                     console.log('req.body.shared',req.body.sharedWith)
