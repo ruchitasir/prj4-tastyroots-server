@@ -25,8 +25,10 @@ router.get('/', (req, res) => {
  */
 router.get('/public', (req, res) => {
     db.Recipe.find({public: true})
+    .populate('creatorId')
     .then((recipes)=>{
         res.send(recipes)
+        console.log(recipes)
     })
     .catch((err) => {
         console.log("Error in get /recipe/public route:",err)
@@ -41,6 +43,7 @@ router.get('/public', (req, res) => {
 router.get('/:id', (req, res) => {
 
     db.Recipe.findOne({_id:req.params.id})
+    .populate('creatorId')
     .then((r) => {
         res.send(r)
     })
@@ -78,21 +81,15 @@ router.post('/',(req,res)=>{
         console.log('post recipe BODY:',req.body)  
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
-        console.log('ingredients', req.body.ingredients)
         ingredientsArray = req.body.ingredients
-        if(ingredientsArray){
-                if (Array.isArray(ingredientsArray)) {
-                    ingredients = ingredientsArray.map((ingredient) => {
-                        ingredientSplit = ingredient.split(',')
-                        return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
-                    })
-                } else {
-                    ingredientSplit = req.body.ingredients.split(',')
-                    ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
-                }
-        }
-        else{
-            ingredients = []
+        if (Array.isArray(ingredientsArray)) {
+            ingredients = ingredientsArray.map((ingredient) => {
+                ingredientSplit = ingredient.split(',')
+                return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
+            })
+        } else {
+            ingredientSplit = req.body.ingredients.split(',')
+            ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
         }
 
         // 1.Create recipe
@@ -105,7 +102,7 @@ router.post('/',(req,res)=>{
             recipeName: req.body.recipeName,
             originalRecipe: req.body.originalRecipe,
             description: req.body.description,  
-            creatorId:  req.body.creatorId,
+            creatorId:  req.user._id,
             servings: req.body.servings,
             prepTime: req.body.prepTime,
             cookTime: req.body.cookTime,
@@ -116,7 +113,7 @@ router.post('/',(req,res)=>{
             public: req.body.public,      
         })
         .then((recipe) => {
-            db.User.updateOne({_id: req.body.creatorId},
+            db.User.updateOne({_id: req.user._id},
                 {$push: {recipes: recipe._id}} )
             .then((updatedUser)=>{
                     console.log('req.body.shared',req.body.sharedWith)
@@ -159,17 +156,11 @@ router.put('/:id', (req, res) => {
     console.log('put recipe BODY:',req.body)  
     // Parse the ingredients from req.body.ingredients array 
     // Assuming each ingredient is a string of form: '2,ounce,butter'
-   
-    if('ingredients' in req.body){
-        ingredientsArray = req.body.ingredients
-        ingredients = ingredientsArray.map((ingredient)=>{
-            ingredientSplit = ingredient.split(',')
-            return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
-        })
-    }
-    else{
-        ingredients = []
-    }
+    ingredientsArray = req.body.ingredients
+    ingredients = ingredientsArray.map((ingredient)=>{
+        ingredientSplit = ingredient.split(',')
+        return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
+    })
 
     db.Recipe.updateOne({_id:req.params.id}, {          
             recipeName: req.body.recipeName,
@@ -215,12 +206,11 @@ router.put('/sharedWith/:id', (req, res) => {
         .then((updatedFamilyCircles=>{
              // add new family circles that user has chosen for sharing, in the recipe
             if(req.body.sharedWith){
-                db.Recipe.findOneAndUpdate({_id:req.params.id},req.body, {useFindAndModify: false})
+                db.Recipe.updateOne({_id:req.params.id},req.body)
                 .then((fullyUpdatedRecipe)=>{
                     // add/update the family circles user has sent in req.body.sharedWith,  with this recipe again
-                    console.log('fullyUpdatedRecipe', fullyUpdatedRecipe)
                     db.FamilyCircle.updateMany({_id: {$in: req.body.sharedWith}}, 
-                        {$push: {familyRecipes: fullyUpdatedRecipe._id}})
+                        {$push: {familyRecipes: fullyUpdatedRecipe}})
                     .then((updatedFamilyCircles)=>{
                         res.send(fullyUpdatedRecipe)            
                     })
