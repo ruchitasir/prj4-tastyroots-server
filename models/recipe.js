@@ -35,7 +35,7 @@ let recipeSchema = new mongoose.Schema({
         type:  mongoose.Schema.Types.ObjectId,
         ref: 'FamilyCircle'
     }],
-    public: {
+    recipePublic: {
         type: Boolean,
         default: false
     },

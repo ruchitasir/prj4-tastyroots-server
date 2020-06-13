@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
  * @returns All recipes in the db which are public
  */
 router.get('/public', (req, res) => {
-    db.Recipe.find({public: true})
+    db.Recipe.find({recipePublic: true})
     .then((recipes)=>{
         res.send(recipes)
     })
@@ -113,7 +113,7 @@ router.post('/',(req,res)=>{
             steps: req.body.steps,
             pictures: req.body.pictures,
             sharedWith : req.body.sharedWith,
-            public: req.body.public,      
+            recipePublic: req.body.recipePublic,      
         })
         .then((recipe) => {
             db.User.updateOne({_id: req.body.creatorId},
@@ -183,7 +183,7 @@ router.put('/:id', (req, res) => {
             steps: req.body.steps,
             pictures: req.body.pictures,
             sharedWith : req.body.sharedWith,
-            public: req.body.public,        
+            recipePublic: req.body.recipePublic,        
     })
     .then((recipe) => {
         res.send(recipe)
