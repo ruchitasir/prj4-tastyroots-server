@@ -1,5 +1,7 @@
 let router = require('express').Router()
 let db = require('../models')
+const { get } = require('mongoose')
+const recipe = require('../models/recipe')
 
 /*****************************
  * GET ROUTES
@@ -24,11 +26,7 @@ router.get('/', (req, res) => {
  * @returns All recipes in the db which are public
  */
 router.get('/public', (req, res) => {
-<<<<<<< HEAD
-    db.Recipe.find({public: true})
-=======
     db.Recipe.find({recipePublic: true})
->>>>>>> 81ad4c81ef7936343afd67be595896620b82ef72
     .populate('creatorId')
     .then((recipes)=>{
         res.send(recipes)
@@ -71,6 +69,24 @@ router.get('/user/:id', (req, res) => {
         console.log("Error in get /recipe/user/:id route:",err)
     })
 })
+
+/**
+ * GET 
+ * @returns All twists from a particular recipe
+ */
+router.get('/twist/:id', (req, res) => {
+    console.log('made it')
+    db.Recipe.find({originalRecipe: req.params.id})
+    .then((twist) => {
+        res.send(twist)
+        console.log(twist)
+    })
+    .catch((err) => {
+        res.send(err)
+        console.log(err)
+    })
+})
+
 
 
 /*****************************
