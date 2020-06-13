@@ -25,6 +25,7 @@ router.get('/', (req, res) => {
  */
 router.get('/public', (req, res) => {
     db.Recipe.find({recipePublic: true})
+    .populate('creatorId')
     .then((recipes)=>{
         res.send(recipes)
     })
