@@ -229,12 +229,12 @@ router.put('/sharedWith/:id', (req, res) => {
                 .then((fullyUpdatedRecipe)=>{
                     // add/update the family circles user has sent in req.body.sharedWith,  with this recipe again
                     db.FamilyCircle.updateMany({_id: {$in: req.body.sharedWith}}, 
-                        {$push: {familyRecipes: fullyUpdatedRecipe}})
+                        {$push: {familyRecipes: fullyUpdatedRecipe._id}})
                     .then((updatedFamilyCircles)=>{
                         res.send(fullyUpdatedRecipe)            
                     })
                     .catch((err) => {
-                        console.log("Error in post /recipe route, updating the family circle with recipe :",err)
+                        console.log("Error in put /recipe route, updating the family circle with recipe :",err)
                     })
                 })
                 .catch((err) => {
