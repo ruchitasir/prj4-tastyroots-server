@@ -100,13 +100,14 @@ router.post('/',(req,res)=>{
         console.log('post recipe BODY:',req.body)  
         // Parse the ingredients from req.body.ingredients array 
         // Assuming each ingredient is a string of form: '2,ounce,butter'
+        let ingredients = []
         ingredientsArray = req.body.ingredients
         if (Array.isArray(ingredientsArray)) {
             ingredients = ingredientsArray.map((ingredient) => {
                 ingredientSplit = ingredient.split(',')
                 return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
             })
-        } else {
+        } else if(req.body.ingredients) {
             ingredientSplit = req.body.ingredients.split(',')
             ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
         }
@@ -175,11 +176,18 @@ router.put('/:id', (req, res) => {
     console.log('put recipe BODY:',req.body)  
     // Parse the ingredients from req.body.ingredients array 
     // Assuming each ingredient is a string of form: '2,ounce,butter'
-    ingredientsArray = req.body.ingredients
-    ingredients = ingredientsArray.map((ingredient)=>{
-        ingredientSplit = ingredient.split(',')
-        return {qty: ingredientSplit[0], unit:ingredientSplit[1] , name:ingredientSplit[2] }
-    })
+   
+        let ingredients = []
+        ingredientsArray = req.body.ingredients
+        if (Array.isArray(ingredientsArray)) {
+            ingredients = ingredientsArray.map((ingredient) => {
+                ingredientSplit = ingredient.split(',')
+                return { qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }
+            })
+        } else if(req.body.ingredients) {
+            ingredientSplit = req.body.ingredients.split(',')
+            ingredients = [{ qty: ingredientSplit[0], unit: ingredientSplit[1], name: ingredientSplit[2] }]
+        }
 
     db.Recipe.updateOne({_id:req.params.id}, {          
             recipeName: req.body.recipeName,
