@@ -10,6 +10,7 @@ let db = require('../models')
 // * GET
 //* Returns all current user info
 router.get('/', (req, res) => {
+  console.log(req.user.id)
   db.User.findById(req.user._id)
     .populate('recipes')
     .populate({path: 'families._id', model:'FamilyCircle'})

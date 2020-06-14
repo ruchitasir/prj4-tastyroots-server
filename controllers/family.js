@@ -11,6 +11,9 @@ let db = require('../models')
  */
 router.get('/:id', (req, res) => {
     db.FamilyCircle.findById(req.params.id)
+    .populate('familyRecipes')
+    .populate('members')
+    .populate('creatorId')
         .then((f) => {
             res.send(f)
         })
