@@ -1,7 +1,6 @@
 let router = require('express').Router()
 let db = require('../models')
-const { get } = require('mongoose')
-const recipe = require('../models/recipe')
+
 
 /*****************************
  * GET ROUTES
