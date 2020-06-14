@@ -1,7 +1,6 @@
 let router = require('express').Router()
 let db = require('../models')
-var jwt = require('jsonwebtoken');
-// var mongoose_1 = __importDefault(require("mongoose"));
+
 
 
 /*****************************
@@ -21,7 +20,6 @@ router.get('/', (req, res) => {
     })
     .catch((err) => {
       console.log("ERROR in user get route", err)
-  
     })
 })
 
