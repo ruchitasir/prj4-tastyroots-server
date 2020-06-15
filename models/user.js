@@ -33,7 +33,7 @@ let userSchema = new mongoose.Schema({
     },
     picture: {
         type: String,
-        default: ''
+        default: 'https://res.cloudinary.com/tasty-roots/image/upload/v1592180109/tasty-roots/w3ptru2tsjlosw7rfyi9.jpg'
     },
     bio: String,
     recipes: [{
