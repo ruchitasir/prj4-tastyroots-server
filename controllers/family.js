@@ -85,6 +85,7 @@ router.put('/', (req, res) => {
         {$push: {members: { _id: req.user._id }}}, 
         {useFindAndModify: false})
         .then((f) => {
+            console.log("family", f)
             db.User.updateOne({ _id: req.user._id },
                 {$push: {
                     families: {_id: f._id,
