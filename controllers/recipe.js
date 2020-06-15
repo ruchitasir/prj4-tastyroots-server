@@ -222,19 +222,21 @@ router.put('/sharedWith/:id', (req, res) => {
     console.log('put sharedWith recipe BODY:',req.body) 
     console.log('req.body.shared',req.body.sharedWith) 
      // removes all the family circles to which this recipe has been previously shared
-    db.Recipe.updateOne({_id:req.params.id}, {  
+    db.Recipe.findOneAndUpdate({_id:req.params.id}, {  
         $set: { sharedWith: [] }
-    })
+    },{returnNewDocument: true})
     .then((recipe) => {
-        // find all the family circles which contains this recipe and update them to not have this recipe
+         // find all the family circles which contains this recipe and update them to not have this recipe
         db.FamilyCircle.updateMany({familyRecipes: req.params.id},{
             $pullAll: {familyRecipes: [req.params.id]}
         })
         .then((updatedFamilyCircles=>{
              // add new family circles that user has chosen for sharing, in the recipe
             if(req.body.sharedWith){
-                db.Recipe.updateOne({_id:req.params.id},req.body)
+                db.Recipe.findOneAndUpdate({_id:req.params.id},req.body,{returnNewDocument: true})
                 .then((fullyUpdatedRecipe)=>{
+                    console.log('fullyUpdatedRecipe',fullyUpdatedRecipe )
+                    console.log('NEW UpdatedRecipe ID',fullyUpdatedRecipe._id )
                     // add/update the family circles user has sent in req.body.sharedWith,  with this recipe again
                     db.FamilyCircle.updateMany({_id: {$in: req.body.sharedWith}}, 
                         {$push: {familyRecipes: fullyUpdatedRecipe._id}})
